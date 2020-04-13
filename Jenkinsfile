@@ -80,11 +80,11 @@ pipeline {
             echo "Not AnyOf - Works!"
          }
       }
-	  
-	stage("actions"){
-        emailext body: "SUCCESS!",
-                subject: "[Jenkins] REPORT",
-                to: "kmitsie48@gmail.com"
-    }
    }
+	
+post {
+        always {
+            mail to: "kmitsie48@gmai.com", subject: 'The Pipeline Successed :)
+        }
+    }
 }
