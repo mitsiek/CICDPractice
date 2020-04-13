@@ -1,17 +1,16 @@
 pipeline {
-  agent any
-  stages {
-    stage('Build') {
-      steps {
-        echo "Into Build stage"
-	echo "BRANCH_NAME=${BRANCH_NAME}"
-	echo "env.BRANCH_NAME=${env.BRANCH_NAME}"
-      }
+    agent any
+
+    environment {
+        DISABLE_AUTH = 'true'
+        DB_ENGINE    = 'sqlite'
     }
-  }
-  post {
-    always {
-      deleteDir()
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'printenv'
+            }
+        }
     }
-  }
 }
