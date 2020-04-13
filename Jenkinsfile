@@ -1,72 +1,43 @@
-pipeline{
-	agent any
-
-	stages {
-	
-	    stage('get build executer details') {
-           steps {
-               script {
-                   wrap([$class: 'BuildUser']) {
-                       echo "BUILD_USER_EMAIL=${BUILD_USER_EMAIL}"
-                       echo "env.BUILD_USER_EMAIL=${env.BUILD_USER_EMAIL}"
-                   }
-               }
-           }
-       }
-		stage('build'){
-			parallel {
-				stage('Build Master') {
-					when {
-						branch 'master'
-					} 
-					steps {    
-						echo "Master Branch"
-					}
-					
-			    post {
-                success {
-                    mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for other branch'
-                }
-            }
-		}
-		
-				stage('Build 9.0.1') {
-					when {
-						branch '9.0.1'
-					} 
-					steps {
-						echo "9.0.1 Branch"
-					}
-					
-				post {
-                success {
-                    mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for other branch'
-                }
-            }
-		}
-				stage('Build Branch') {
-					when { 
-						not {
-							anyOf
-							{
-								branch 'master';
-								branch '9.0.0';
-								branch '9.0.1';
-								branch '/^Feature.*$/'
-							} 
-						}
-					}
-					steps {
-						echo "Other branch Branch"
-					}
-					
-				post {
-                always {
-                    mail to: "${env.BUILD_USER_EMAIL}", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for other branch'
-                }
-				}
-			}
-		}
-	}
-}
+pipeline {
+  agent any
+  stages {
+    stage('Build') {
+      steps {
+        echo "Into Build stage"
+      }
+    }
+  }
+  post {
+    always {
+      deleteDir()
+    }
+    success {
+      script {
+        if (env.BRANCH_NAME == 'master') {
+          emailext (
+            to: 'kmitsie48@gmail.com',
+            subject: "${env.JOB_NAME} #${env.BUILD_NUMBER} master is fine",
+            body: "The master build is happy.\n\nConsole: ${env.BUILD_URL}.\n\n",
+            attachLog: true,
+          )
+        } else if (env.BRANCH_NAME == 'development') {
+          // also send email to tell people their PR status
+		  emailext (
+            to: 'kmitsie48@gmail.com',
+            subject: "${env.JOB_NAME} #${env.BUILD_NUMBER} development is fine",
+            body: "The development build is happy.\n\nConsole: ${env.BUILD_URL}.\n\n",
+            attachLog: true,
+          )
+        } else {
+          // this is some other branch
+		  emailext (
+            to: 'miteshkokare21@gmail.com',
+            subject: "${env.JOB_NAME} #${env.BUILD_NUMBER} production is fine",
+            body: "The production build is happy.\n\nConsole: ${env.BUILD_URL}.\n\n",
+            attachLog: true,
+          )
+        } 
+      }
+    }     
+  }
 }
