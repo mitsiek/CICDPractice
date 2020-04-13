@@ -16,7 +16,7 @@ pipeline{
 			parallel {
 				stage('Build Master') {
 					when (BRANCH_NAME == 'master') {
-					echo 'Only on master branch.'
+					echo "Only on master branch"
 					} 
 					steps {    
 						mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for master branch'
