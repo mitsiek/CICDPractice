@@ -85,9 +85,7 @@ pipeline {
 post {
         always {
                 mail to: 'kmitsie48@gmail.com', from: 'miteshkokare21@gmail.com',
-                subject: "Example Build: ${env.JOB_NAME} - Failed", 
-            
-        }
+                subject: "Example Build: ${env.JOB_NAME} - Failed"
     }
 
 }
