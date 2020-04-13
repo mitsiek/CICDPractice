@@ -1,90 +1,58 @@
-pipeline {
-   agent any
-    
-   environment {
-      VALUE_ONE = '1'
-      VALUE_TWO = '2'
-      VALUE_THREE = '3'
-   }
-    
-   stages {
-   
-      // skip a stage while creating the pipeline
-      stage("A stage to be skipped") {
-         when {
-            expression { false }  //skip this stage
-         }
-         steps {
-            echo 'This step will never be run'
-         }
-      }
-      
-      // Execute when branch = 'master'
-      stage("BASIC WHEN - Branch") {
-         when {
-            branch 'master'
-	 }
-         steps {
-            echo 'BASIC WHEN - Master Branch!'
-         }
-      }
-      
-      // Expression based when example with AND
-      stage('WHEN EXPRESSION with AND') {
-         when {
-            expression {
-               VALUE_ONE == '1' && VALUE_THREE == '3'
-            }
-         }
-         steps {
-            echo 'WHEN with AND expression works!'
-         }
-      }
-      
-      // Expression based when example
-      stage('WHEN EXPRESSION with OR') {
-         when {
-            expression {
-               VALUE_ONE == '1' || VALUE_THREE == '2'
-            }
-         }
-         steps {
-            echo 'WHEN with OR expression works!'
-         }
-      }
-      
-      // When - AllOf Example
-      stage("AllOf") {
-        when {
-            allOf {
-                environment name:'VALUE_ONE', value: '1'
-                environment name:'VALUE_TWO', value: '2'
-            }
-        }
-        steps {
-            echo "AllOf Works!!"
-        }
-      }
-      
-      // When - Not AnyOf Example
-      stage("Not AnyOf") {
-         when {
-            not {
-               anyOf {
-                  branch "development"
-                  environment name:'VALUE_TWO', value: '4'
-               }
-            }
-         }
-         steps {
-            echo "Not AnyOf - Works!"
-         }
-      }
-   }
+pipeline{
+	agent any
+	options {
+		buildDiscarder(logRotator(
+				// number of builds to keep
+				numToKeepStr:         env.BRANCH_NAME ==~ /master|9.0.0|9.0.1/ ? '300' : '20'
+				))
+	}
+	stages {
 	
-post {
-        always {
-            mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job details'
-        }
-    }
+	    stage('get build executer details') {
+           steps {
+               script {
+                   wrap([$class: 'BuildUser']) {
+                       echo "BUILD_USER_EMAIL=${BUILD_USER_EMAIL}"
+                       echo "env.BUILD_USER_EMAIL=${env.BUILD_USER_EMAIL}"
+                   }
+               }
+           }
+       }
+		stage('build'){
+			parallel {
+				stage('Build Master') {
+					when {
+						branch 'master'
+					} 
+					steps {    
+						mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for master branch'
+					}
+				}
+				stage('Build 9.0.1') {
+					when {
+						branch '9.0.1'
+					} 
+					steps {
+						mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for 9.0.1 branch'
+					}
+				}
+				stage('Build Branch') {
+					when { 
+						not {
+							anyOf
+							{
+								branch 'master';
+								branch '9.0.0';
+								branch '9.0.1';
+								branch '/^Feature.*$/'
+							} 
+						}
+					} 
+					steps {
+						mail to: ${env.BUILD_USER_EMAIL}, subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for other branch'
+					}
+				}
+			}
+		}
+	}
 }
