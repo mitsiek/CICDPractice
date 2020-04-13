@@ -39,7 +39,7 @@ pipeline{
 								branch "master";
 								branch "9.0.0";
 								branch "9.0.1";
-								branch "/^Feature.*$/"
+								branch "/^Feature.*\$/"
 							} 
 						}
 					} 
