@@ -84,7 +84,7 @@ pipeline {
 	
 post {
         always {
-            mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)'
+            mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job details'
         }
     }
 }
