@@ -3,7 +3,8 @@ pipeline{
 	options {
 		buildDiscarder(logRotator(
 				// number of builds to keep
-				numToKeepStr:         env.BRANCH_NAME ==~ /master|9.0.0|9.0.1/ ? '300' : '20'
+				numToKeepStr:         
+			        env.BRANCH_NAME ==~ /master|9.0.0|9.0.1/ ? '300' : '20'
 				))
 	}
 	stages {
@@ -22,7 +23,7 @@ pipeline{
 			parallel {
 				stage('Build Master') {
 					when {
-						branch 'master'
+						branch '*/master'
 					} 
 					steps {    
 						mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for master branch'
@@ -30,7 +31,7 @@ pipeline{
 				}
 				stage('Build 9.0.1') {
 					when {
-						branch '9.0.1'
+						branch '*/9.0.1'
 					} 
 					steps {
 						mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for 9.0.1 branch'
@@ -41,9 +42,9 @@ pipeline{
 						not {
 							anyOf
 							{
-								branch 'master';
-								branch '9.0.0';
-								branch '9.0.1';
+								branch '*/master';
+								branch '*/9.0.0';
+								branch '*/9.0.1';
 								branch '/^Feature.*$/'
 							} 
 						}
