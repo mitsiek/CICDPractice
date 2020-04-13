@@ -85,7 +85,7 @@ pipeline {
 post {
         always {
                 emailext (
-                to: 'kmitsie48@gmail.com';'miteshkokare21@gmail.com'
+                to: "kmitsie48@gmail.com;miteshkokare21@gmail.com"
                 subject: "SUCCESS",
                 body: "SUCCESS!"
             )
