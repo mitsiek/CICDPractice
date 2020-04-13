@@ -29,6 +29,7 @@ pipeline{
                 }
             }
 		}
+		
 				stage('Build 9.0.1') {
 					when {
 						branch '9.0.1'
@@ -43,7 +44,6 @@ pipeline{
                 }
             }
 		}
-				}
 				stage('Build Branch') {
 					when { 
 						not {
@@ -65,4 +65,5 @@ pipeline{
 			}
 		}
 	}
+}
 }
