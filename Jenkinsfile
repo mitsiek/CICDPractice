@@ -1,20 +1,13 @@
 pipeline{
 	agent any
-	options {
-		buildDiscarder(logRotator(
-				// number of builds to keep
-				numToKeepStr:         
-			        env.BRANCH_NAME ==~ /master|9.0.0|9.0.1/ ? '300' : '20'
-				))
-	}
+
 	stages {
 	
 	    stage('get build executer details') {
            steps {
                script {
                    wrap([$class: 'BuildUser']) {
-                       echo "BUILD_USER_EMAIL=${BUILD_USER_EMAIL}"
-                       echo "env.BUILD_USER_EMAIL=${env.BUILD_USER_EMAIL}"
+                       BUILD_USER_EMAIL=${BUILD_USER_EMAIL}
                    }
                }
            }
@@ -22,8 +15,8 @@ pipeline{
 		stage('build'){
 			parallel {
 				stage('Build Master') {
-					when {
-						branch '*/master'
+					when (BRANCH_NAME == 'master') {
+					echo 'Only on master branch.'
 					} 
 					steps {    
 						mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for master branch'
