@@ -1,6 +1,5 @@
 pipeline{
 	agent any
-
 	stages {
 	
 	    stage('get build executer details') {
@@ -15,8 +14,8 @@ pipeline{
 		stage('build'){
 			parallel {
 				stage('Build Master') {
-					when (BRANCH_NAME == 'master') {
-					echo "Only on master branch"
+					when {
+						branch '*/master'
 					} 
 					steps {    
 						mail to: "kmitsie48@gmail.com", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for master branch'
