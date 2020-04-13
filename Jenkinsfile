@@ -49,7 +49,7 @@ pipeline{
 						}
 					} 
 					steps {
-						mail to: ${env.BUILD_USER_EMAIL}, subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for other branch'
+						mail to: "${env.BUILD_USER_EMAIL}", subject: 'The Pipeline Successed :)', body: 'Jenkins job triggered for other branch'
 					}
 				}
 			}
