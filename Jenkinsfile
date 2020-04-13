@@ -81,7 +81,7 @@ pipeline {
          }
       }
 	  
-	  stage('actions'){
+	stage("actions"){
         emailext body: "SUCCESS!",
                 subject: "[Jenkins] REPORT",
                 to: "kmitsie48@gmail.com"
