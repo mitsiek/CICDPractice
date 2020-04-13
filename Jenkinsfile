@@ -84,11 +84,8 @@ pipeline {
 
 post {
         always {
-                emailext (
-                to: "kmitsie48@gmail.com;miteshkokare21@gmail.com"
-                subject: "SUCCESS",
-                body: "SUCCESS!"
-            )
+                mail to: 'kmitsie48@gmail.com', from: 'miteshkokare21@gmail.com',
+                subject: "Example Build: ${env.JOB_NAME} - Failed", 
             
         }
     }
