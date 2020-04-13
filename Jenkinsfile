@@ -56,6 +56,9 @@ pipeline{
 							} 
 						}
 					}
+					steps {
+						echo "Other branch Branch"
+					}
 					
 				post {
                 success {
